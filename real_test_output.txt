@@ -1,0 +1,73 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1773468315.572564    5072 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1773468316.503944    5072 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 AVX_VNNI FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1773468319.929610    5072 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+/home/kkmvy/gsoc-env/lib/python3.12/site-packages/keras/src/layers/core/dense.py:106: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+W0000 00:00:1773468324.714325    5072 gpu_device.cc:2365] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
+Skipping registering GPU devices...
+Step 1: Building Keras model...
+Model: "sequential"
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┓
+┃ Layer (type)                    ┃ Output Shape           ┃       Param # ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━┩
+│ dense (Dense)                   │ (None, 64)             │         1,088 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_1 (Dense)                 │ (None, 32)             │         2,080 │
+├─────────────────────────────────┼────────────────────────┼───────────────┤
+│ dense_2 (Dense)                 │ (None, 5)              │           165 │
+└─────────────────────────────────┴────────────────────────┴───────────────┘
+ Total params: 3,333 (13.02 KB)
+ Trainable params: 3,333 (13.02 KB)
+ Non-trainable params: 0 (0.00 B)
+
+Step 2: Converting to HLS4ML...
+
+Step 3: Inspecting adapted layers...
+  Layer: input_layer | class: InputLayer
+    inputs:  ['input']
+    outputs: ['input_layer']
+    attributes: {'input_shape': [16], 'activation': 'linear', 'alpha': 1.0}
+  Layer: dense | class: Dense
+    inputs:  ['input_layer']
+    outputs: ['dense']
+    attributes: {'input_shape': [16], 'n_in': 16, 'n_out': 64, 'activation': 'linear', 'alpha': 1.0}
+    weight: kernel, shape: (16, 64)
+    weight: bias, shape: (64,)
+  Layer: dense_relu | class: Activation
+    inputs:  ['dense']
+    outputs: ['dense_relu']
+    attributes: {'input_shape': [64], 'n_in': 64, 'activation': 'relu', 'alpha': 1.0}
+  Layer: dense_1 | class: Dense
+    inputs:  ['dense_relu']
+    outputs: ['dense_1']
+    attributes: {'input_shape': [64], 'n_in': 64, 'n_out': 32, 'activation': 'linear', 'alpha': 1.0}
+    weight: kernel, shape: (64, 32)
+    weight: bias, shape: (32,)
+  Layer: dense_1_relu | class: Activation
+    inputs:  ['dense_1']
+    outputs: ['dense_1_relu']
+    attributes: {'input_shape': [32], 'n_in': 32, 'activation': 'relu', 'alpha': 1.0}
+  Layer: dense_2 | class: Dense
+    inputs:  ['dense_1_relu']
+    outputs: ['dense_2']
+    attributes: {'input_shape': [32], 'n_in': 32, 'n_out': 5, 'activation': 'linear', 'alpha': 1.0}
+    weight: kernel, shape: (32, 5)
+    weight: bias, shape: (5,)
+  Layer: dense_2_softmax | class: Activation
+    inputs:  ['dense_2']
+    outputs: ['dense_2_softmax']
+    attributes: {'input_shape': [5], 'n_in': 5, 'activation': 'softmax', 'alpha': 1.0}
+
+Step 4: Parsing into SOFIE RModel...
+ParseHLS4ML: Parsing graph RealHLS4MLModel
+  Note: activation 'softmax' mapped to identity (no SOFIE op needed for inference skeleton).
+
+Step 5: Generating C++ inference header...
+
+Step 6: Compiling generated header...
+
+ SUCCESS: Real HLS4ML model parsed, generated, and compiled!
+Generated file: RealHLS4MLModel.hxx
